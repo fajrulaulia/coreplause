@@ -1,33 +1,47 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import Storage from '../storage/AsynStorage';
+import Config from '../services/config';
 
 const Profile = ({ navigation }) => {
 
     const [nickName, SetNickName] = React.useState("");
+    const [status, setStatus] = React.useState("");
 
     React.useEffect(() => {
-        getData()
+        Storage.getUserData()
+            .then(res => res !== null && SetNickName(res))
+            .catch(err => console.log("Storage.getUserData().Error() :", err));
     })
 
 
     const logoutHandler = () => {
-        AsyncStorage.clear()
+        Storage.CleanAllData()
             .then(() => navigation.replace("Login"))
-            .catch((e) => console.log("AsyncStorage.clear Error", e))
+            .catch(err => console.log("AsyncStorage.clear Error", err));
     }
 
 
-    const getData = async () => {
-        try {
-            const value = await AsyncStorage.getItem('@USER')
-            if (value !== null) {
-                SetNickName(value)
+
+    const TestNetwork = () => {
+        Config.testConnect().then(result => {
+            console.log("result", result.data?.message)
+            if (result.data?.message === "Welcome to Coreplause Service") {
+                setStatus("Terkoneksi")
+                setTimeout(() => {
+                    setStatus("")
+                }, 5000);
             }
-        } catch (e) {
-            console.log("AsyncStorage.getItem error :", e)
-        }
+        }).catch(err => {
+            let strErr = "Koneksi Gagal Karena : "
+            strErr += "MESSAGE [" + err.message + "]"
+            strErr += "DESC [" + JSON.stringify(err) + "]"
+
+            setStatus(strErr)
+        })
     }
+
+
 
     return (
         <View style={styles.container}>
@@ -37,6 +51,13 @@ const Profile = ({ navigation }) => {
             <TouchableOpacity style={styles.button} onPress={() => logoutHandler()}>
                 <Text style={styles.buttonText}>Logout</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => TestNetwork()}>
+                <Text style={styles.buttonText2}>Network Test</Text>
+            </TouchableOpacity>
+            
+            <Text style={styles.buttonText2}>{status}</Text>
+
         </View>
     )
 
@@ -74,6 +95,11 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold'
     },
+    buttonText2: {
+        color: 'black',
+        marginTop: 10,
+        textAlign: 'center'
+    }
 
 });
 

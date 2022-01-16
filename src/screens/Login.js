@@ -1,6 +1,5 @@
 import React from 'react';
-import uuid from 'react-native-uuid';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import Storage from '../storage/AsynStorage'
 
 import {
     StyleSheet,
@@ -12,43 +11,32 @@ import {
 
 
 const Login = ({ navigation }) => {
-    const [text, setText] = React.useState('Fajrul Aulia');
+    const [user, setUser] = React.useState('Fajrul Aulia');
     const [loading, setLoading] = React.useState('');
 
     React.useEffect(() => {
-        getData()
+        Storage.getUserData()
+            .then(res => res !== null && navigation.replace('Home'))
+            .catch(err => console.log("Storage.getUserData().Error() :", err))
     })
 
     const onClick = () => {
-        if (text === "" || text === null || text === undefined) {
+        if (user === "" || user === null || user === undefined) {
             setLoading("Nickname is empty")
             return
         }
         setLoading("Loading...")
-        storeData(text);
+        storeData(user);
 
     }
 
     const storeData = (user) => {
-        AsyncStorage.setItem('@USER', user).then(() => {
-            navigation.replace('Home');
-        }).catch(() => {
-            setLoading("AsyncStorage.setItem Error")
-
-        })
+        Storage.storeUserData(user)
+            .then(() => navigation.replace('Home'))
+            .catch((err) => setLoading("Storage.storeUserData(user).Error() :", err))
     }
 
 
-    const getData = async () => {
-        try {
-            const value = await AsyncStorage.getItem('@USER')
-            if (value !== null) {
-                navigation.replace('Home');
-            }
-        } catch (e) {
-            console.log("AsyncStorage.getItem error :", e)
-        }
-    }
 
     return (
         <View style={styles.container}>
@@ -62,8 +50,8 @@ const Login = ({ navigation }) => {
                 <TextInput
                     style={styles.textField}
                     placeholder="Fill new Nickname"
-                    onChangeText={text => setText(text)}
-                    defaultValue={text}
+                    onChangeText={v => setUser(v)}
+                    defaultValue={user}
                     underlineColorAndroid='blue'
                     maxLength={30}
                 />

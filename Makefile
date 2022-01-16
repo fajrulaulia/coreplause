@@ -1,16 +1,17 @@
-redis-up:
-	docker-compose up -d redis
-redis-down:
-	docker-compose stop redis
-
 local-run-android:
-	react-native run-android
+	@clear
+	@react-native run-android
 
 local-run-metro:
-	yarn start --reset-cache
+	@clear
+	@npm start --reset-cache
 
-react-native-fix-runner:
+clean-project:
 	watchman watch-del-all
 	rm -rf node_modules 
-	yarn install
+	npm install
 	rm -rf /tmp/metro-*
+
+build:
+	cd android && ./gradlew assembleRelease
+	@echo redirect ke ./app/build/outputs/apk/release

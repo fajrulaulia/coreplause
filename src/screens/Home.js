@@ -16,11 +16,8 @@ const Home = () => {
                 options={{
                     title: 'Chatt Room',
                     tabBarLabel: 'Chatt',
-                    showIcon: true,
-                    tabBarIcon: () => (
-                        <Icon name="glass" size={30} color="#900" />
-                    ),
-                    // tabBarBadge: 3,
+                    showIcon: false,
+                   // tabBarIcon: () => <Icon name="glass" size={30} color="#900" />
                 }}
                 component={ChattScreen} />
             <Tab.Screen
@@ -28,11 +25,8 @@ const Home = () => {
                 options={{
                     title: 'My Profile',
                     tabBarLabel: 'Profile',
-                    showIcon: true,
-                    tabBarIcon: () => (
-                        <Icon name="glass" size={30} color="#900" />
-                    ),
-                    // tabBarBadge: 3,
+                    showIcon: false,
+                    //tabBarIcon: () => <Icon name="glass" size={30} color="#900" />
                 }}
                 component={ProfileScreen} />
         </Tab.Navigator>

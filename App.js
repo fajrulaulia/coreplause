@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import LoginScreen from './src/Login';
-import HomeScreen from './src/Home';
+import LoginScreen from './src/screens/Login';
+import HomeScreen from './src/screens/Home';
 const Stack = createNativeStackNavigator();
 
 function Route() {
