@@ -1,6 +1,6 @@
 # Coreplause Mobile App
 
-Coreplause Mobile App build by react native and websocket.
+Coreplause Mobile App build by react native and websocket. and using https://github.com/fajrulaulia/coreplause-nodejs-express as backend
 
 
 ## preview
