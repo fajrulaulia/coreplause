@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { View, Text, TextInput, StyleSheet, Button, FlatList } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Button, FlatList, ActivityIndicator } from 'react-native'
 import ServiceHistory from '../services/histories'
 import ServiceSend from '../services/Send'
 
@@ -43,14 +43,17 @@ const Chatt = () => {
 
     const onChangeText = (e) => {
         SetMsgTxt(e)
-        console.log("keep write lentgh,",e.length )
         if (e.length > 0) {
             setIsActive(true)
-        }else{
+        } else {
             setIsActive(false)
-
         }
     }
+    const handleKeyDown = (e) => {
+        SendMessage()
+
+    }
+
 
     const SendMessage = () => {
         setIsActive(false)
@@ -69,20 +72,23 @@ const Chatt = () => {
     return (
         <View style={styles.container}>
             {
-                msgList.length > 0 ? <FlatList
+                msgList.length > 0 && <FlatList
                     style={styles.bubble}
                     ref={scrollViewRef}
                     onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: false })}
                     data={msgList}
                     renderItem={({ item }) => ((
                         <View style={[styles.bubbleMini, item.owner === nickName && styles.bubbleMiniOwn]}>
-                            <Text style={{ color:'black',fontSize: 10, paddingBottom: 5 }}>{item.owner}</Text>
-                            <Text style={{color:'black'}}>{item.message}</Text>
-                            <Text style={{ color:'black',fontSize: 10, paddingTop: 5 }}>{item.timestamp}</Text>
+                            <Text style={{ color: 'black', fontSize: 10, paddingBottom: 5 }}>{item.owner}</Text>
+                            <Text style={{ color: 'black' }}>{item.message}</Text>
+                            <Text style={{ color: 'black', fontSize: 10, paddingTop: 5 }}>{item.timestamp}</Text>
                         </View>
                     ))}
+                    ListEmptyComponent={() => ((
+                        <ActivityIndicator />
+                    ))}
                     enableEmptySections={true}
-                /> : <Text>Loading</Text>
+                />
             }
 
             <View style={styles.footerFixed}>
@@ -90,6 +96,7 @@ const Chatt = () => {
                     value={msgTxt}
                     onChangeText={(e) => onChangeText(e)}
                     style={styles.textField}
+                    onSubmitEditing={(e) => handleKeyDown(e)}
                 />
                 <Button disabled={!IsActive} title='Send' onPress={() => SendMessage()} />
             </View>
@@ -103,7 +110,7 @@ const Chatt = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
+        paddingHorizontal: 10,
     },
     title: {
         fontSize: 30,

@@ -27,7 +27,7 @@ const Profile = ({ navigation }) => {
         Config.testConnect().then(result => {
             console.log("result", result.data?.message)
             if (result.data?.message === "Welcome to Coreplause Service") {
-                setStatus("Terkoneksi")
+                setStatus("Connected")
                 setTimeout(() => {
                     setStatus("")
                 }, 5000);

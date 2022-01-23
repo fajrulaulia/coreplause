@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+import ServiceValidate from '../services/validate'
 
 const Login = ({ navigation }) => {
     const [user, setUser] = React.useState('Fajrul Aulia');
@@ -22,14 +23,29 @@ const Login = ({ navigation }) => {
 
     const onClick = () => {
         if (user === "" || user === null || user === undefined) {
-            setLoading("Nickname is empty")
+            setLoading("Username is empty")
             return
         }
+
+        const usernameRegex = /^[a-zA-Z0-9]+$/;
+
+        if (!usernameRegex.test(user)) {
+            setLoading("Username is invalid, user a-z A-Z 0-9")
+            return
+        }
+        console.log("usernameRegex.test(user)",usernameRegex.test(user))
+
         setLoading("Loading...")
-        storeData(user);
 
+        ServiceValidate.validate({ user: user }).then((result) => {
+            if (result.data?.success) {
+                storeData(user);
+            } else {
+                setLoading(`username with "${user}"  has registered, use another username`)
+            }
+        })
+        setTimeout(() => { setLoading("") }, 5000);
     }
-
     const storeData = (user) => {
         Storage.storeUserData(user)
             .then(() => navigation.replace('Home'))
@@ -53,7 +69,7 @@ const Login = ({ navigation }) => {
                     onChangeText={v => setUser(v)}
                     defaultValue={user}
                     underlineColorAndroid='blue'
-                    maxLength={30}
+                    maxLength={30} z
                 />
                 <Text style={styles.textLoading}>{loading}</Text>
                 <TouchableOpacity
@@ -107,6 +123,7 @@ const styles = StyleSheet.create({
     },
     textLoading: {
         marginBottom: 10,
+        width:300,
         textAlign: 'center'
     }
 
