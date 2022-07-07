@@ -43,13 +43,21 @@ const Login = ({ navigation }) => {
             } else {
                 setLoading(`username with "${user}"  has registered, use another username`)
             }
+        }).catch((err)=>{
+            if (err?.message?.includes("Network Error")){
+                setLoading(`failed to connect server, maybe server down or you connection down`)
+                console.log(err.message)
+            }
+            console.log(err.message)
         })
         setTimeout(() => { setLoading("") }, 5000);
     }
     const storeData = (user) => {
         Storage.storeUserData(user)
             .then(() => navigation.replace('Home'))
-            .catch((err) => setLoading("Storage.storeUserData(user).Error() :", err))
+            .catch((err) => {
+                setLoading("Storage.storeUserData(user).Error() :", err)
+            })
     }
 
 

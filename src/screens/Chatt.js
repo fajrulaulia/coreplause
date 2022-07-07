@@ -1,11 +1,13 @@
 import React, { useRef, useState } from 'react'
-import { View, Text, TextInput, StyleSheet, Button, FlatList, ActivityIndicator } from 'react-native'
+import { View, Platform, Text, TextInput, StyleSheet, Button, FlatList, ActivityIndicator } from 'react-native'
 import ServiceHistory from '../services/histories'
 import ServiceSend from '../services/Send'
 
 import Storage from '../storage/AsynStorage'
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import Config from '../services/config';
+
+// import { notification } from '../services/NotifService'
 
 var client = new W3CWebSocket(Config.WEBSOCKET, 'echo-protocol');
 
@@ -24,6 +26,9 @@ const Chatt = () => {
     }
     client.onmessage = e => {
         console.log('WebSocket Client updated code :', e.data);
+        // notification.configure()
+        // notification.CreateNotif()
+        // notification.sendNotif()
         loadHistory()
     };
 
@@ -71,25 +76,26 @@ const Chatt = () => {
 
     return (
         <View style={styles.container}>
-            {
-                msgList.length > 0 && <FlatList
-                    style={styles.bubble}
-                    ref={scrollViewRef}
-                    onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: false })}
-                    data={msgList}
-                    renderItem={({ item }) => ((
-                        <View style={[styles.bubbleMini, item.owner === nickName && styles.bubbleMiniOwn]}>
-                            <Text style={{ color: 'black', fontSize: 10, paddingBottom: 5 }}>{item.owner}</Text>
-                            <Text style={{ color: 'black' }}>{item.message}</Text>
-                            <Text style={{ color: 'black', fontSize: 10, paddingTop: 5 }}>{item.timestamp}</Text>
-                        </View>
-                    ))}
-                    ListEmptyComponent={() => ((
-                        <ActivityIndicator />
-                    ))}
-                    enableEmptySections={true}
-                />
-            }
+
+            <FlatList
+                style={styles.bubble}
+                ref={scrollViewRef}
+                onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: false })}
+                data={msgList}
+                keyExtractor={(_e, idx) => idx.toString()}
+                renderItem={({ item }) => ((
+                    <View style={[styles.bubbleMini, item.owner === nickName && styles.bubbleMiniOwn]}>
+                        <Text style={{ color: 'black', fontSize: 10, paddingBottom: 5 }}>{item.owner}</Text>
+                        <Text style={{ color: 'black' }}>{item.message}</Text>
+                        <Text style={{ color: 'black', fontSize: 10, paddingTop: 5 }}>{item.timestamp}</Text>
+                    </View>
+                ))}
+                ListEmptyComponent={() => ((
+                    <ActivityIndicator />
+                ))}
+                enableEmptySections={true}
+            />
+
 
             <View style={styles.footerFixed}>
                 <TextInput
@@ -119,14 +125,16 @@ const styles = StyleSheet.create({
         color: '#370665'
     },
     bubble: {
-        marginBottom: 70,
+        marginBottom: 100,
+
     },
     bubbleMini: {
         backgroundColor: '#fff',
-        padding: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
         marginTop: 7,
         width: '50%',
-        borderRadius: 30
+        borderRadius: 20
     },
     bubbleMiniOwn: {
         backgroundColor: '#ccc',
@@ -142,6 +150,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 10,
+        paddingHorizontal: 15,
     },
     subtitle: {
         fontSize: 18,
